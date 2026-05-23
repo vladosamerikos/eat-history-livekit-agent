@@ -1,0 +1,5 @@
+livekit-agents[google,silero,mcp]~=1.2
+google-cloud-speech>=2.25
+google-cloud-texttospeech>=2.16
+google-genai>=1.0
+python-dotenv>=1.0

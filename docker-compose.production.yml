@@ -1,0 +1,22 @@
+services:
+  agent:
+    container_name: eh-agent-prod
+    image: eat-history-agent:prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # ADC para Vertex + Google Cloud STT/TTS.
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcloud-adc.json
+      # google-auth usa este si el ADC no trae quota_project (ADC de gcloud no lo trae).
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_VERTEX_PROJECT:-eat-history-ai}
+    volumes:
+      - ${GOOGLE_ADC_PATH:-${HOME}/.config/gcloud/application_default_credentials.json}:/secrets/gcloud-adc.json:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
