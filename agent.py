@@ -89,6 +89,7 @@ class JobMeta:
     locale: str
     mcp_token: str
     api_base: str
+    photo_url: str = ""
 
     @classmethod
     def parse(cls, raw: str | None) -> "JobMeta":
@@ -98,6 +99,7 @@ class JobMeta:
             locale=data.get("locale", "es"),
             mcp_token=data.get("mcpToken", ""),
             api_base=data.get("apiBase", "https://eat-history.vladys.dev/v1"),
+            photo_url=data.get("photoUrl", "") or "",
         )
 
 
@@ -117,6 +119,25 @@ async def entrypoint(ctx: JobContext) -> None:
 
     instructions, greeting_prompt, greeting_fallback = load_prompts_for_locale(meta.locale)
 
+    # Si la sesión se ha abierto con una foto adjunta (p.ej. desde el botón
+    # de la cámara), inyectamos una pista al system prompt para que el LLM
+    # sepa que puede usar la herramienta `meals_add_from_photo`.
+    if meta.photo_url:
+        photo_hint = (
+            "\n\n[CONTEXTO DE SESIÓN]\n"
+            f"El usuario ha adjuntado una foto de su plato: {meta.photo_url}\n"
+            "Saluda brevemente y ofrécele analizarla. Si acepta (o si te pide\n"
+            "registrar la comida), llama a la tool `meals_add_from_photo` con\n"
+            f"`photo_url=\"{meta.photo_url}\"` y el `type` adecuado (breakfast,\n"
+            "lunch, snack o dinner) según el contexto u hora actual. Confirma\n"
+            "al usuario los items detectados y el total de kcal."
+        )
+        instructions = instructions + photo_hint
+        greeting_prompt = (
+            f"{greeting_prompt}\n\nEl usuario acaba de adjuntar una foto de su comida. "
+            "Salúdalo y preguntale brevemente si quieres que la analices y la registres."
+        )
+
     @llm.function_tool(
         description="Ends the call/hangs up. Call this when the user says they are done, want to say goodbye, or want to hang up."
     )
@@ -129,8 +150,7 @@ async def entrypoint(ctx: JobContext) -> None:
         vad=ctx.proc.userdata["vad"],
         stt=google.STT(
             languages=[stt_lang],
-            model="chirp_2",
-            location=os.getenv("GOOGLE_VERTEX_LOCATION", "us-central1"),
+            model="latest_long",
         ),
         llm=google.LLM(
             model=config.LLM_MODEL,

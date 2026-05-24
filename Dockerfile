@@ -16,7 +16,8 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY agent.py ./
+COPY agent.py config.py ./
+COPY prompts/ ./prompts/
 
 # Pre-descarga del modelo Silero VAD para que el primer job sea rápido.
 RUN python -c "from livekit.plugins import silero; silero.VAD.load()"
