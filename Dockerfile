@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 # libs nativas para audio (silero/onnx, opus, etc.)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates ffmpeg libsndfile1 \
+    ca-certificates ffmpeg libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -16,7 +16,7 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY agent.py config.py ./
+COPY agent.py agent_chat.py config.py ./
 COPY prompts/ ./prompts/
 
 # Pre-descarga del modelo Silero VAD para que el primer job sea rápido.

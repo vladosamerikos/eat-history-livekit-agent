@@ -20,3 +20,27 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # Segundo agente: conversacional/coach (agentName="eat-history-chat"), con
+  # modelo LLM y voz configurables por context params. Reutiliza la misma imagen
+  # pero arranca agent_chat.py en lugar de agent.py.
+  chat-agent:
+    container_name: eh-agent-chat-prod
+    image: eat-history-agent:prod
+    depends_on:
+      - agent
+    entrypoint: ["python", "agent_chat.py"]
+    command: ["start"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcloud-adc.json
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_VERTEX_PROJECT:-eat-history-ai}
+    volumes:
+      - ${GOOGLE_ADC_PATH:-${HOME}/.config/gcloud/application_default_credentials.json}:/secrets/gcloud-adc.json:ro
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
