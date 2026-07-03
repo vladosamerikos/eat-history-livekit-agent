@@ -1,6 +1,6 @@
-# Eat History - LiveKit Voice Agent
+# FoodCommit - LiveKit Voice Agent
 
-This directory contains the LiveKit voice agent for Eat History. It acts as an interactive voice assistant that helps users log meals, check existing catalog items, log their weight, and manage daily nutrition history.
+This directory contains the LiveKit voice agent for FoodCommit. It acts as an interactive voice assistant that helps users log meals, check existing catalog items, log their weight, and manage daily nutrition history.
 
 ## Features
 

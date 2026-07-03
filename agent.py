@@ -1,12 +1,12 @@
 """
-LiveKit voice agent for Eat History.
+LiveKit voice agent for FoodCommit.
 
 Recibe un job dispatched explícitamente desde el backend (NestJS) con metadata:
     {
       "userId": str,
       "locale": "es" | "en" | "uk",
       "mcpToken": <JWT corto para llamar al MCP>,
-      "apiBase":  "https://eat-history.vladys.dev/v1"
+      "apiBase":  "https://foodcommit.app/v1"
     }
 
 - STT: Google Cloud Speech-to-Text (streaming)
@@ -41,10 +41,10 @@ from livekit.plugins import google, silero
 
 import config
 
-logger = logging.getLogger("eat-history-agent")
+logger = logging.getLogger("foodcommit-agent")
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 
-AGENT_NAME = "eat-history"
+AGENT_NAME = "foodcommit"
 
 
 def load_prompts_for_locale(locale: str) -> tuple[str, str, str]:
@@ -54,7 +54,7 @@ def load_prompts_for_locale(locale: str) -> tuple[str, str, str]:
     current_dir = os.path.dirname(os.path.abspath(__file__))
     prompt_path = os.path.join(current_dir, "prompts", f"{loc}.txt")
     
-    system_prompt = "Eres el asistente de voz de Eat History. Ayuda al usuario a registrar comidas y peso."
+    system_prompt = "Eres el asistente de voz de FoodCommit. Ayuda al usuario a registrar comidas y peso."
     greeting_prompt = "Genera un saludo inicial amigable."
     greeting_fallback = "Hola, ¿qué has comido hoy?"
     
@@ -98,7 +98,7 @@ class JobMeta:
             user_id=data.get("userId", "unknown"),
             locale=data.get("locale", "es"),
             mcp_token=data.get("mcpToken", ""),
-            api_base=data.get("apiBase", "https://eat-history.vladys.dev/v1"),
+            api_base=data.get("apiBase", "https://foodcommit.app/v1"),
             photo_url=data.get("photoUrl", "") or "",
         )
 

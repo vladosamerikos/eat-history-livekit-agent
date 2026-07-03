@@ -1,14 +1,14 @@
 """
-LiveKit conversational voice agent for Eat History ("coach").
+LiveKit conversational voice agent for FoodCommit ("coach").
 
-Segundo agente, independiente del agente clásico `eat-history`. Se registra como
-worker con agentName="eat-history-chat" y se despacha desde el backend con
+Segundo agente, independiente del agente clásico `foodcommit`. Se registra como
+worker con agentName="foodcommit-chat" y se despacha desde el backend con
 metadata configurable:
     {
       "userId": str,
       "locale": "es" | "en" | "uk",
       "mcpToken": <JWT corto para llamar al MCP>,
-      "apiBase":  "https://eat-history.vladys.dev/v1",
+      "apiBase":  "https://foodcommit.app/v1",
       "model":    "gemini-2.5-flash" | "gemini-2.5-pro" | ...,   # opcional
       "ttsEngine": "chirp3" | "journey" | "neural2"               # opcional
     }
@@ -45,10 +45,10 @@ from livekit.plugins import google, silero
 
 import config
 
-logger = logging.getLogger("eat-history-chat-agent")
+logger = logging.getLogger("foodcommit-chat-agent")
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 
-AGENT_NAME = "eat-history-chat"
+AGENT_NAME = "foodcommit-chat"
 
 
 def load_prompts_for_locale(locale: str) -> tuple[str, str, str]:
@@ -60,7 +60,7 @@ def load_prompts_for_locale(locale: str) -> tuple[str, str, str]:
     prompt_path = os.path.join(current_dir, "prompts", f"chat_{loc}.txt")
 
     system_prompt = (
-        "Eres el coach nutricional por voz de Eat History. Ayuda al usuario "
+        "Eres el coach nutricional por voz de FoodCommit. Ayuda al usuario "
         "con su alimentación y registra comidas y peso cuando lo pida."
     )
     greeting_prompt = "Genera un saludo inicial amigable."
@@ -107,7 +107,7 @@ class JobMeta:
             user_id=data.get("userId", "unknown"),
             locale=data.get("locale", "es"),
             mcp_token=data.get("mcpToken", ""),
-            api_base=data.get("apiBase", "https://eat-history.vladys.dev/v1"),
+            api_base=data.get("apiBase", "https://foodcommit.app/v1"),
             model=(data.get("model") or config.LLM_MODEL),
             tts_engine=(data.get("ttsEngine") or None),
         )

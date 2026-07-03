@@ -1,7 +1,7 @@
 services:
   agent:
     container_name: eh-agent-prod
-    image: eat-history-agent:prod
+    image: foodcommit-agent:prod
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,12 +21,12 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # Segundo agente: conversacional/coach (agentName="eat-history-chat"), con
+  # Segundo agente: conversacional/coach (agentName="foodcommit-chat"), con
   # modelo LLM y voz configurables por context params. Reutiliza la misma imagen
   # pero arranca agent_chat.py en lugar de agent.py.
   chat-agent:
     container_name: eh-agent-chat-prod
-    image: eat-history-agent:prod
+    image: foodcommit-agent:prod
     depends_on:
       - agent
     entrypoint: ["python", "agent_chat.py"]
